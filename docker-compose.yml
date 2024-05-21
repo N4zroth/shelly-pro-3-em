@@ -15,6 +15,8 @@ services:
       - ./influxdb/data:/var/lib/influxdb2
     ports:
       - 8086:8086
+      - 9098:9892
+      - 9098:9892
       - 8083:8083
     env_file:
       - ./influxdb/influx.env
@@ -61,5 +63,14 @@ services:
     environment:
       - TZ=Germany/Berlin
     restart: always
+  shelly-emulator:
+    image: github/shelly-emulator
+    container_name: shelly-emulator
+    depends_on:
+      - mosquitto
+      - influxdb
+    links:
+      - mosquitto
+      - influxdb
 volumes:
   shelly:

@@ -40,7 +40,7 @@ exports:
     # username:                             # [Optional] Username if not using token
     # password:                             # [Optional] Password if not using token
     org: "none"                          # [Required] InfluxDB Organization (for influxdb v1.8x this will be ignored)
-    bucket: "energy"                     # [Required] InfluxDB Bucket (for influxdb v1.8x this is the database name)
+    bucket: "pv"                     # [Required] InfluxDB Bucket (for influxdb v1.8x this is the database name)
     measurements:                           # [Required] Registers to publish to bucket
       - point: "current power usage"
         register: load_power_hybrid
@@ -63,63 +63,63 @@ exports:
 
   # Publish Registers to MQTT / Home Assistant
   - name: mqtt
-    enabled: False                          # [Optional] Default is False
-    host: 192.168.1.200                     # [Required] IP or Hostname of MQTT Server 
+    enabled: True                          # [Optional] Default is False
+    host: mosquitto                     # [Required] IP or Hostname of MQTT Server 
     # port: 1883                            # [Optional] Default 1883
     # topic: "SunGather/{serial_number}"    # [Optional] Default: "SunGather/{serial_number}"
     # username:                             # [Optional] Username is MQTT server requires it
     # password:                             # [Optional] Password is MQTT server requires it
     # client_id:                            # [Optional] Client id for mqtt connection. Defaults to Serial Number.
-    homeassistant: True
-    ha_sensors:
-      - name: "Daily Generation"
-        sensor_type: sensor
-        register: daily_power_yields
-        device_class: energy
-        state_class: total_increasing
-        icon: "mdi:solar-power"
-      - name: "Daily Export to Grid"
-        sensor_type: sensor
-        register: daily_export_to_grid
-        device_class: energy
-        state_class: total_increasing
-        icon: "mdi:transmission-tower-export"
-        value_template: "{{ value_json.daily_export_to_grid | round(2) }}"
-        last_reset_value_template: "{{ value_json.last_reset }}"
-      - name: "Daily Import from Grid"
-        sensor_type: sensor
-        register: daily_import_from_grid
-        device_class: energy
-        state_class: total_increasing
-        icon: "mdi:transmission-tower-import"
-        value_template: "{{ value_json.daily_import_from_grid | round(2) }}"
-        last_reset_value_template: "{{ value_json.last_reset }}"
-      - name: "Temperature"
-        sensor_type: sensor
-        register: internal_temperature
-        device_class: temperature
-        state_class: measurement
-      - name: "Power State"
-        sensor_type: binary_sensor
-        register: run_state
-        device_class: running
-        payload_on: "ON"
-        payload_off: "OFF"
-      - name: "Active Generation"
-        sensor_type: sensor
-        register: total_active_power
-        dev_class: power
-        state_class: measurement
-      - name: "Active Export to Grid"
-        sensor_type: sensor
-        register: export_to_grid
-        dev_class: power
-        state_class: measurement
-      - name: "Active Import from Grid"
-        sensor_type: sensor
-        register: import_from_grid
-        dev_class: power
-        state_class: measurement
+    homeassistant: False
+#    ha_sensors:
+#      - name: "Daily Generation"
+#        sensor_type: sensor
+#        register: daily_power_yields
+#        device_class: energy
+#        state_class: total_increasing
+#        icon: "mdi:solar-power"
+#      - name: "Daily Export to Grid"
+#        sensor_type: sensor
+#        register: daily_export_to_grid
+#        device_class: energy
+#        state_class: total_increasing
+#        icon: "mdi:transmission-tower-export"
+#        value_template: "{{ value_json.daily_export_to_grid | round(2) }}"
+#        last_reset_value_template: "{{ value_json.last_reset }}"
+#      - name: "Daily Import from Grid"
+#        sensor_type: sensor
+#        register: daily_import_from_grid
+#        device_class: energy
+#        state_class: total_increasing
+#        icon: "mdi:transmission-tower-import"
+#        value_template: "{{ value_json.daily_import_from_grid | round(2) }}"
+#        last_reset_value_template: "{{ value_json.last_reset }}"
+#      - name: "Temperature"
+#        sensor_type: sensor
+#        register: internal_temperature
+#        device_class: temperature
+#        state_class: measurement
+#      - name: "Power State"
+#        sensor_type: binary_sensor
+#        register: run_state
+#        device_class: running
+#        payload_on: "ON"
+#        payload_off: "OFF"
+#      - name: "Active Generation"
+#        sensor_type: sensor
+#        register: total_active_power
+#        dev_class: power
+#        state_class: measurement
+#      - name: "Active Export to Grid"
+#        sensor_type: sensor
+#        register: export_to_grid
+#        dev_class: power
+#        state_class: measurement
+#      - name: "Active Import from Grid"
+#        sensor_type: sensor
+#        register: import_from_grid
+#        dev_class: power
+#        state_class: measurement
 
   # Publish Registers to PVOutput
   - name: pvoutput      
