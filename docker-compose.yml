@@ -58,6 +58,8 @@ services:
     volumes:
       - ./sungather/config.yaml:/config/config.yaml
       - ./sungather/logs:/logs
+    depends_on:
+      - influxdb
     links:
       - influxdb
     environment:
