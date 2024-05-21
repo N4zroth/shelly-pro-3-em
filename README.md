@@ -1,1 +1,5 @@
-
+- Change docker-compose to absolute folders if run on a NAS
+- Build shelly-emulator (``mvn clean install``)
+- ``docker build --build-arg JAR_FILE=target/*.jar -t github/shelly-emulator .`` from within shelly-emulator
+- ``docker-compose up -d``
+- Create a bucket named 'pv' with InfluxDB's web UI
