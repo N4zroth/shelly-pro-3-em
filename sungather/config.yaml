@@ -70,7 +70,7 @@ exports:
     enabled: True                          # [Optional] Default is False
     host: mosquitto                     # [Required] IP or Hostname of MQTT Server 
     # port: 1883                            # [Optional] Default 1883
-    # topic: "SunGather/{serial_number}"    # [Optional] Default: "SunGather/{serial_number}"
+    topic: "sungather"    # [Optional] Default: "SunGather/{serial_number}"
     # username:                             # [Optional] Username is MQTT server requires it
     # password:                             # [Optional] Password is MQTT server requires it
     # client_id:                            # [Optional] Client id for mqtt connection. Defaults to Serial Number.
