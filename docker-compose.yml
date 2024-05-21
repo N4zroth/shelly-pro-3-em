@@ -7,6 +7,7 @@ services:
     ports:
       - 1883:1883
       - 9001:9001
+    restart: always
   influxdb:
     image: influxdb
     container_name: influxdb
@@ -14,8 +15,12 @@ services:
       - ./influxdb/data:/var/lib/influxdb2
     ports:
       - 8086:8086
+      - 9098:9892
+      - 9098:9892
+      - 8083:8083
     env_file:
       - ./influxdb/influx.env
+    restart: always
   telegraf:
     image: telegraf
     container_name: telegraf
@@ -28,9 +33,10 @@ services:
       - mosquitto
       - influxdb
     ports:
-      - '8125:8125'
+      - 8125:8125
     env_file:
       - ./influxdb/influx.env
+    restart: always
   grafana:
     image: grafana/grafana
     container_name: grafana
@@ -45,5 +51,29 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=password
+    restart: always
+  sungather:
+    image: bohdans/sungather
+    container_name: sungather
+    volumes:
+      - ./sungather/config.yaml:/config/config.yaml
+      - ./sungather/logs:/logs
+    depends_on:
+      - influxdb
+    links:
+      - influxdb
+    environment:
+      - TZ=Germany/Berlin
+    restart: always
+  shelly-emulator:
+    image: github/shelly-emulator
+    container_name: shelly-emulator
+    depends_on:
+      - mosquitto
+      - influxdb
+    links:
+      - mosquitto
+      - influxdb
+    restart: always
 volumes:
   shelly:
