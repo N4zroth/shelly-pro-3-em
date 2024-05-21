@@ -44,29 +44,33 @@ exports:
     measurements:                           # [Required] Registers to publish to bucket
       - point: "current power usage"
         register: load_power_hybrid
-      - point: "current power generation"
+      - point: "current active power"
         register: total_active_power
+      - point: "current power generation"
+        register: total_dc_power
       - point: "daily power yield"
         register: daily_power_yields
-      - point: "current power export"
+      - point: "current power import/export"
         register: export_power_hybrid
       - point: "current power from battery"
         register: battery_power
       - point: "current battery level"
         register: battery_level
-      - point: "current power import"
-        register: import_from_grid
       - point: "daily power import"
         register: daily_import_energy
       - point: "total power import"
         register: total_import_energy
+      - point: "battery charging"
+        register: state_battery_charging
+      - point: "battery discharging"
+        register: state_battery_discharging
 
   # Publish Registers to MQTT / Home Assistant
   - name: mqtt
     enabled: True                          # [Optional] Default is False
     host: mosquitto                     # [Required] IP or Hostname of MQTT Server 
     # port: 1883                            # [Optional] Default 1883
-    # topic: "SunGather/{serial_number}"    # [Optional] Default: "SunGather/{serial_number}"
+    topic: "sungather"    # [Optional] Default: "SunGather/{serial_number}"
     # username:                             # [Optional] Username is MQTT server requires it
     # password:                             # [Optional] Password is MQTT server requires it
     # client_id:                            # [Optional] Client id for mqtt connection. Defaults to Serial Number.
