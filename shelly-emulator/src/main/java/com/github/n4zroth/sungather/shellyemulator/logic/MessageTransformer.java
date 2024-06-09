@@ -33,7 +33,6 @@ public class MessageTransformer {
 
     private final InfluxDBClient influxDBClient;
     private final MqttConfig mqttConfig;
-    private final IMqttClient iMqttClient;
     private final ObjectMapper objectMapper;
     private final IMqttClient mqttClient;
 
@@ -94,20 +93,20 @@ public class MessageTransformer {
             log.info("This seems to be the first run, no result found in the last year");
             // This should only happen when this is run for the first time or when there's been no entries in the 
             // past year
-            return new SungatherMeasurement(Instant.EPOCH, 0L);
+            return new SungatherMeasurement(Instant.EPOCH, 0.0);
         }
 
         if (result.size() != 1) {
             throw new IncorrectResultSizeDataAccessException("Received more than one result for a query using last()",
-                    result.size(), 1);
+                    1, result.size());
         }
 
         final List<FluxRecord> records = result.get(0).getRecords();
         if (records.size() != 1) {
             throw new IncorrectResultSizeDataAccessException("Received something other than one single record",
-                    records.size(), 1);
+                    1, records.size());
         }
 
-        return new SungatherMeasurement(records.get(0).getTime(), (Long) records.get(0).getValue());
+        return new SungatherMeasurement(records.get(0).getTime(), (Double) records.get(0).getValue());
     }
 }
