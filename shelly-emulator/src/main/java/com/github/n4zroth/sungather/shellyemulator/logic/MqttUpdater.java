@@ -29,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 @Scope("singleton")
 @RequiredArgsConstructor
 @Slf4j
-public class MessageTransformer {
+public class MqttUpdater implements SungatherMessageListener {
 
     private final InfluxDBClient influxDBClient;
     private final MqttConfig mqttConfig;
@@ -39,7 +39,8 @@ public class MessageTransformer {
     private SungatherMeasurement lastMeasurement = null;
     private SungatherMessage lastMessage = null;
 
-    public void handleMessage(final SungatherMessage sungatherMessage) throws JsonProcessingException, MqttException {
+    public void handleMessage(final SungatherMessage sungatherMessage) {
+        log.debug("{} handling message", this.getClass().getName());
         if (lastMeasurement == null) {
             lastMeasurement = fetchLastMeasurement();
         }
@@ -65,10 +66,14 @@ public class MessageTransformer {
         }
         lastMessage = sungatherMessage;
 
-        sendMessage(objectMapper.writeValueAsString(new ShellyMessageCurrent(lastMessage.currentLoad())),
-                mqttConfig.getOutboundCurrentTopic());
-        sendMessage(objectMapper.writeValueAsString(new ShellyMessageTotal(lastMeasurement.totalPower())),
-                mqttConfig.getOutboundTotalTopic());
+        try {
+            sendMessage(objectMapper.writeValueAsString(new ShellyMessageCurrent(lastMessage.currentLoad())),
+                    mqttConfig.getOutboundCurrentTopic());
+            sendMessage(objectMapper.writeValueAsString(new ShellyMessageTotal(lastMeasurement.totalPower())),
+                    mqttConfig.getOutboundTotalTopic());
+        } catch (final MqttException | JsonProcessingException e) {
+            log.error("Error while trying to send updates", e);
+        }
     }
 
     private void sendMessage(final String message, final String topic) throws MqttException {

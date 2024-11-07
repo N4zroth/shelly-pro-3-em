@@ -1,7 +1,7 @@
+version: "3"
 services:
   mosquitto:
     image: eclipse-mosquitto
-    container_name: mosquitto
     volumes:
       - ./mosquitto:/mosquitto
     ports:
@@ -10,7 +10,6 @@ services:
     restart: always
   influxdb:
     image: influxdb
-    container_name: influxdb
     volumes:
       - ./influxdb/data:/var/lib/influxdb2
     ports:
@@ -23,7 +22,6 @@ services:
     restart: always
   telegraf:
     image: telegraf
-    container_name: telegraf
     volumes:
       - ./telegraf:/etc/telegraf
     depends_on:
@@ -39,7 +37,6 @@ services:
     restart: always
   grafana:
     image: grafana/grafana
-    container_name: grafana
     volumes:
       - ./grafana:/var/lib/grafana
     ports:
@@ -54,7 +51,6 @@ services:
     restart: always
   sungather:
     image: bohdans/sungather
-    container_name: sungather
     volumes:
       - ./sungather/config.yaml:/config/config.yaml
       - ./sungather/logs:/logs
@@ -67,7 +63,6 @@ services:
     restart: always
   shelly-emulator:
     image: github/shelly-emulator
-    container_name: shelly-emulator
     depends_on:
       - mosquitto
       - influxdb
