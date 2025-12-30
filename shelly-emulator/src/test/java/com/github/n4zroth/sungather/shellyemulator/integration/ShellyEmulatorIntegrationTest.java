@@ -8,7 +8,6 @@ import java.util.concurrent.TimeUnit;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.n4zroth.sungather.shellyemulator.config.IntegrationTestConfiguration;
 import com.github.n4zroth.sungather.shellyemulator.fixtures.TestDataBuilder;
-import com.github.n4zroth.sungather.shellyemulator.logic.MessageTransformer;
 import com.github.n4zroth.sungather.shellyemulator.model.ShellyMessageCurrent;
 import com.github.n4zroth.sungather.shellyemulator.model.ShellyMessageTotal;
 import com.github.n4zroth.sungather.shellyemulator.model.SungatherMessage;
@@ -28,9 +27,6 @@ import static org.awaitility.Awaitility.await;
 @Import(IntegrationTestConfiguration.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class ShellyEmulatorIntegrationTest extends BaseIntegrationTest {
-
-    @Autowired
-    private MessageTransformer messageTransformer;
 
     @Autowired
     private ObjectMapper objectMapper;

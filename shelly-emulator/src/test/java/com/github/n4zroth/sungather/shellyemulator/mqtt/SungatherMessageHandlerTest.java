@@ -3,8 +3,10 @@ package com.github.n4zroth.sungather.shellyemulator.mqtt;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.n4zroth.sungather.shellyemulator.config.MqttConfig;
 import com.github.n4zroth.sungather.shellyemulator.fixtures.TestDataBuilder;
-import com.github.n4zroth.sungather.shellyemulator.logic.MessageTransformer;
+import com.github.n4zroth.sungather.shellyemulator.logic.SungatherMessageListener;
 import com.github.n4zroth.sungather.shellyemulator.model.SungatherMessage;
+
+import java.util.List;
 import org.eclipse.paho.client.mqttv3.IMqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -25,7 +27,7 @@ import static org.mockito.Mockito.*;
 class SungatherMessageHandlerTest {
 
     @Mock
-    private MessageTransformer messageTransformer;
+    private SungatherMessageListener messageListener;
 
     @Mock
     private IMqttClient mqttClient;
@@ -42,7 +44,7 @@ class SungatherMessageHandlerTest {
         objectMapper = new ObjectMapper();
         when(mqttConfig.getInboundTopic()).thenReturn("sungather");
 
-        handler = new SungatherMessageHandler(messageTransformer, mqttClient, mqttConfig, objectMapper);
+        handler = new SungatherMessageHandler(List.of(messageListener), mqttClient, mqttConfig, objectMapper);
     }
 
     @Test
@@ -62,7 +64,7 @@ class SungatherMessageHandlerTest {
 
         // Then
         ArgumentCaptor<SungatherMessage> messageCaptor = ArgumentCaptor.forClass(SungatherMessage.class);
-        verify(messageTransformer).handleMessage(messageCaptor.capture());
+        verify(messageListener).handleMessage(messageCaptor.capture());
 
         SungatherMessage captured = messageCaptor.getValue();
         assertThat(captured.dailyBatteryDischargeEnergy()).isEqualTo(5.0);
@@ -81,8 +83,8 @@ class SungatherMessageHandlerTest {
         assertThatCode(() -> handler.messageArrived("sungather", mqttMessage))
                 .doesNotThrowAnyException();
 
-        // Verify transformer was NOT called
-        verify(messageTransformer, never()).handleMessage(any());
+        // Verify listener was NOT called
+        verify(messageListener, never()).handleMessage(any());
     }
 
     @Test
@@ -95,8 +97,8 @@ class SungatherMessageHandlerTest {
         assertThatCode(() -> handler.messageArrived("sungather", mqttMessage))
                 .doesNotThrowAnyException();
 
-        // Verify transformer was NOT called (deserialization should fail due to missing required fields)
-        verify(messageTransformer, never()).handleMessage(any());
+        // Verify listener was NOT called (deserialization should fail due to missing required fields)
+        verify(messageListener, never()).handleMessage(any());
     }
 
     @Test
@@ -108,8 +110,8 @@ class SungatherMessageHandlerTest {
         assertThatCode(() -> handler.messageArrived("sungather", mqttMessage))
                 .doesNotThrowAnyException();
 
-        // Verify transformer was NOT called
-        verify(messageTransformer, never()).handleMessage(any());
+        // Verify listener was NOT called
+        verify(messageListener, never()).handleMessage(any());
     }
 
     @Test
@@ -121,6 +123,9 @@ class SungatherMessageHandlerTest {
                     "daily_direct_energy_consumption": 5.0,
                     "daily_import_energy": 3.0,
                     "load_power_hybrid": 1000.0,
+                    "export_power_hybrid": 0.0,
+                    "state_battery_discharging": 0,
+                    "battery_power": 0.0,
                     "unknown_field_1": "ignored",
                     "unknown_field_2": 12345
                 }
@@ -132,7 +137,7 @@ class SungatherMessageHandlerTest {
 
         // Then
         ArgumentCaptor<SungatherMessage> messageCaptor = ArgumentCaptor.forClass(SungatherMessage.class);
-        verify(messageTransformer).handleMessage(messageCaptor.capture());
+        verify(messageListener).handleMessage(messageCaptor.capture());
 
         SungatherMessage captured = messageCaptor.getValue();
         assertThat(captured.dailyBatteryDischargeEnergy()).isEqualTo(10.0);
@@ -158,13 +163,13 @@ class SungatherMessageHandlerTest {
         handler.messageArrived("sungather", msg3);
 
         // Then
-        verify(messageTransformer, times(3)).handleMessage(any(SungatherMessage.class));
+        verify(messageListener, times(3)).handleMessage(any(SungatherMessage.class));
     }
 
     @Test
     void shouldConvertPayloadToString_AndDeserialize() throws Exception {
         // Given
-        String json = "{\"daily_battery_discharge_energy\":7.5,\"daily_direct_energy_consumption\":4.5,\"daily_import_energy\":2.5,\"load_power_hybrid\":850.0}";
+        String json = "{\"daily_battery_discharge_energy\":7.5,\"daily_direct_energy_consumption\":4.5,\"daily_import_energy\":2.5,\"load_power_hybrid\":850.0,\"export_power_hybrid\":0.0,\"state_battery_discharging\":0,\"battery_power\":0.0}";
         MqttMessage mqttMessage = new MqttMessage(json.getBytes());
 
         // When
@@ -172,7 +177,7 @@ class SungatherMessageHandlerTest {
 
         // Then
         ArgumentCaptor<SungatherMessage> messageCaptor = ArgumentCaptor.forClass(SungatherMessage.class);
-        verify(messageTransformer).handleMessage(messageCaptor.capture());
+        verify(messageListener).handleMessage(messageCaptor.capture());
 
         SungatherMessage captured = messageCaptor.getValue();
         assertThat(captured.dailyBatteryDischargeEnergy()).isEqualTo(7.5);

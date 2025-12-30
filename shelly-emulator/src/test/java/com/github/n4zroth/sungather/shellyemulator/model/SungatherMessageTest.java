@@ -12,7 +12,7 @@ class SungatherMessageTest {
     @Test
     void shouldCalculateDailyConsumption_WithValidValues() {
         // Given
-        SungatherMessage message = new SungatherMessage(5.0, 3.0, 2.0, 500.0);
+        SungatherMessage message = new SungatherMessage(5.0, 3.0, 2.0, 500.0, 0.0, 0, 0.0);
 
         // When
         long result = message.getDailyConsumption();
@@ -25,7 +25,7 @@ class SungatherMessageTest {
     @Test
     void shouldCalculateDailyConsumption_WithZeroValues() {
         // Given
-        SungatherMessage message = new SungatherMessage(0.0, 0.0, 0.0, 0.0);
+        SungatherMessage message = new SungatherMessage(0.0, 0.0, 0.0, 0.0, 0.0, 0, 0.0);
 
         // When
         long result = message.getDailyConsumption();
@@ -37,7 +37,7 @@ class SungatherMessageTest {
     @Test
     void shouldCalculateDailyConsumption_WithFractionalValues() {
         // Given
-        SungatherMessage message = new SungatherMessage(1.5, 2.3, 3.7, 100.0);
+        SungatherMessage message = new SungatherMessage(1.5, 2.3, 3.7, 100.0, 0.0, 0, 0.0);
 
         // When
         long result = message.getDailyConsumption();
@@ -50,7 +50,7 @@ class SungatherMessageTest {
     @Test
     void shouldCalculateDailyConsumption_WithLargeValues() {
         // Given
-        SungatherMessage message = new SungatherMessage(100.0, 75.5, 50.25, 10000.0);
+        SungatherMessage message = new SungatherMessage(100.0, 75.5, 50.25, 10000.0, 0.0, 0, 0.0);
 
         // When
         long result = message.getDailyConsumption();
@@ -63,7 +63,7 @@ class SungatherMessageTest {
     @Test
     void shouldRoundDailyConsumption_Correctly() {
         // Given - values that result in fractional Wh
-        SungatherMessage message = new SungatherMessage(1.1111, 2.2222, 3.3333, 100.0);
+        SungatherMessage message = new SungatherMessage(1.1111, 2.2222, 3.3333, 100.0, 0.0, 0, 0.0);
 
         // When
         long result = message.getDailyConsumption();
@@ -81,7 +81,10 @@ class SungatherMessageTest {
                     "daily_battery_discharge_energy": 5.0,
                     "daily_direct_energy_consumption": 3.0,
                     "daily_import_energy": 2.0,
-                    "load_power_hybrid": 500.0
+                    "load_power_hybrid": 500.0,
+                    "export_power_hybrid": 0.0,
+                    "state_battery_discharging": 0,
+                    "battery_power": 0.0
                 }
                 """;
 
@@ -105,6 +108,9 @@ class SungatherMessageTest {
                     "daily_direct_energy_consumption": 3.0,
                     "daily_import_energy": 2.0,
                     "load_power_hybrid": 500.0,
+                    "export_power_hybrid": 0.0,
+                    "state_battery_discharging": 0,
+                    "battery_power": 0.0,
                     "unknown_field": "should be ignored"
                 }
                 """;
@@ -127,7 +133,10 @@ class SungatherMessageTest {
                     "daily_battery_discharge_energy": 1.0,
                     "daily_direct_energy_consumption": 2.0,
                     "daily_import_energy": 3.0,
-                    "load_power_hybrid": 400.0
+                    "load_power_hybrid": 400.0,
+                    "export_power_hybrid": 0.0,
+                    "state_battery_discharging": 0,
+                    "battery_power": 0.0
                 }
                 """;
 

@@ -23,7 +23,7 @@ public class TestDataBuilder {
             double directConsumption,
             double importedEnergy,
             double currentLoad) {
-        return new SungatherMessage(batteryDischarge, directConsumption, importedEnergy, currentLoad);
+        return new SungatherMessage(batteryDischarge, directConsumption, importedEnergy, currentLoad, 0.0, 0, 0.0);
     }
 
     /**
@@ -56,7 +56,10 @@ public class TestDataBuilder {
                     "daily_battery_discharge_energy": 5.0,
                     "daily_direct_energy_consumption": 3.0,
                     "daily_import_energy": 2.0,
-                    "load_power_hybrid": 500.0
+                    "load_power_hybrid": 500.0,
+                    "export_power_hybrid": 0.0,
+                    "state_battery_discharging": 0,
+                    "battery_power": 0.0
                 }
                 """;
     }
