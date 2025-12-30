@@ -1,0 +1,7 @@
+{
+  "daily_battery_discharge_energy": 5.5,
+  "daily_direct_energy_consumption": 3.2,
+  "daily_import_energy": 2.1,
+  "load_power_hybrid": 750.5,
+  "extra_field_should_be_ignored": "test"
+}

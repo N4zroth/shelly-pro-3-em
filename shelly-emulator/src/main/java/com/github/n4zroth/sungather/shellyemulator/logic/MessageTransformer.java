@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.n4zroth.sungather.shellyemulator.config.InfluxConfig;
 import com.github.n4zroth.sungather.shellyemulator.config.MqttConfig;
 import com.github.n4zroth.sungather.shellyemulator.model.ShellyMessageCurrent;
 import com.github.n4zroth.sungather.shellyemulator.model.ShellyMessageTotal;
@@ -32,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 public class MessageTransformer {
 
     private final InfluxDBClient influxDBClient;
+    private final InfluxConfig influxConfig;
     private final MqttConfig mqttConfig;
     private final ObjectMapper objectMapper;
     private final IMqttClient mqttClient;
@@ -80,12 +82,12 @@ public class MessageTransformer {
     }
 
     private SungatherMeasurement fetchLastMeasurement() {
-        final String flux = """
-                from(bucket: "energy")
+        final String flux = String.format("""
+                from(bucket: "%s")
                   |> range(start: -1y)
                   |> filter(fn: (r) => r["_field"] == "total_act" and r["device"] == "total")
                   |> last()
-                """;
+                """, influxConfig.getBucket());
 
         final List<FluxTable> result = influxDBClient.getQueryApi().query(flux);
 
